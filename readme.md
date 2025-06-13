@@ -34,11 +34,12 @@ When processing structured data keys like `users.0.id`, `orders.12.items.3.price
 ## Installation & Usage
 
 ```bash
-git clone https://github.com/pranavjoshi2122/genlift-take-home-repo.git
-cd pattern-extractor
+git clone https://github.com/vaibhavsharma3070/genlift-take-home-repo.git
+cd genlift-take-home-repo
 python -m pytest tests/
 ```
 
+### Basic Usage
 ```python
 from pattern_extractor import extract_generalized_patterns
 
@@ -51,6 +52,60 @@ keys = [
 patterns = extract_generalized_patterns(keys)
 print(patterns)
 # {'users\\.\\d+\\.id', 'users\\.\\d+\\.name', 'orders\\.\\d+\\.items\\.\\d+\\.price'}
+```
+
+### Testing & Validation
+
+**Run Full Test Suite:**
+```bash
+python -m pytest test_pattern_extractor.py -v
+```
+
+**Run Example Demonstrations:**
+```bash
+python examples.py
+```
+
+**Test with Custom Data:**
+```bash
+python test_custom.py
+```
+
+**Test 75-95% Generalization:**
+```bash
+python test_75_95_percent.py
+```
+
+**Create Your Own Test:**
+```python
+# Create test_my_data.py
+from pattern_extractor import extract_generalized_patterns
+
+def test_my_scenario():
+    custom_keys = [
+        # Add your keys here
+        "api.v1.users.123.profile",
+        "api.v1.users.456.settings",
+        "database.connections.5.status"
+    ]
+    
+    print(f"Testing {len(custom_keys)} custom keys:")
+    for key in custom_keys:
+        print(f"  {key}")
+    
+    patterns = extract_generalized_patterns(custom_keys)
+    
+    print(f"\nGenerated {len(patterns)} patterns:")
+    for pattern in sorted(patterns):
+        print(f"  {pattern}")
+
+if __name__ == "__main__":
+    test_my_scenario()
+```
+
+**Performance Benchmarking:**
+```bash
+python benchmark.py
 ```
 
 ## Implementation Details
