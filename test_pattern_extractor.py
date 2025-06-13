@@ -31,9 +31,9 @@ class TestBasicPatternExtraction:
         result = extract_generalized_patterns(keys)
         
         expected = {
-            "orders\\.\\d+\\.items\\.\\d+\\.price",
-            "orders\\.\\d+\\.items\\.\\d+\\.quantity", 
-            "data\\.\\d+\\.nested\\.\\d+\\.value"
+            "orders\\\\.\\\\d+\\\\.items\\\\.\\\\d+\\\\.price",
+            "orders\\\\.\\\\d+\\\\.items\\\\.\\\\d+\\\\.quantity", 
+            "data\\\\.\\\\d+\\\\.nested\\\\.\\\\d+\\\\.value"
         }
         assert result == expected
     
@@ -48,9 +48,9 @@ class TestBasicPatternExtraction:
         
         # Should properly escape brackets, parentheses, plus signs
         expected = {
-            "api\\[v1\\]\\.users\\.\\d+\\.data",
-            "cache\\(redis\\)\\.keys\\.\\d+\\.value",
-            "logs\\+debug\\.\\d+\\.message"
+            "api\\\\[v1\\\\]\\\\.users\\\\.\\\\d+\\\\.data",
+            "cache\\\\(redis\\\\)\\\\.keys\\\\.\\\\d+\\\\.value",
+            "logs\\\\+debug\\\\.\\\\d+\\\\.message"
         }
         assert result == expected
     
@@ -61,7 +61,7 @@ class TestBasicPatternExtraction:
         
         # Empty strings
         result = extract_generalized_patterns(["", "  ", "valid.1.key"])
-        assert result == {"valid\\.\\d+\\.key"}
+        assert result == {"valid\\\\.\\\\d+\\\\.key"}
         
         # Single segment keys
         result = extract_generalized_patterns(["standalone", "another"])
@@ -86,10 +86,10 @@ class TestAdvancedGeneralization:
         
         # Should generalize users pattern, keep orders separate
         expected = {
-            "users\\.\\d+\\.\\w+",
-            "orders\\.\\d+\\.total",
-            "orders\\.\\d+\\.currency", 
-            "orders\\.\\d+\\.created_at"
+            "users\\\\.\\\\d+\\\\.\\\\w+",
+            "orders\\\\.\\\\d+\\\\.total",
+            "orders\\\\.\\\\d+\\\\.currency", 
+            "orders\\\\.\\\\d+\\\\.created_at"
         }
         assert result == expected
     
@@ -105,10 +105,10 @@ class TestAdvancedGeneralization:
         
         # Should keep all patterns separate
         expected = {
-            "users\\.\\d+\\.name", "users\\.\\d+\\.email",
-            "orders\\.\\d+\\.total", "orders\\.\\d+\\.status",
-            "products\\.\\d+\\.price", "logs\\.\\d+\\.message", 
-            "cache\\.\\d+\\.key"
+            "users\\\\.\\\\d+\\\\.name", "users\\\\.\\\\d+\\\\.email",
+            "orders\\\\.\\\\d+\\\\.total", "orders\\\\.\\\\d+\\\\.status",
+            "products\\\\.\\\\d+\\\\.price", "logs\\\\.\\\\d+\\\\.message", 
+            "cache\\\\.\\\\d+\\\\.key"
         }
         assert result == expected
     
@@ -124,7 +124,7 @@ class TestAdvancedGeneralization:
         result = extract_generalized_patterns(keys)
         
         # Should NOT generalize due to 100% frequency
-        expected = {"users\\.\\d+\\.id"}
+        expected = {"users\\\\.\\\\d+\\\\.id"}
         assert result == expected
     
     def test_mixed_generalization_scenarios(self):
@@ -145,10 +145,10 @@ class TestAdvancedGeneralization:
         
         # All should remain separate since no group reaches 75%
         expected = {
-            "users\\.\\d+\\.name", "users\\.\\d+\\.email", "users\\.\\d+\\.age", "users\\.\\d+\\.phone",
-            "users\\.\\d+\\.address", "users\\.\\d+\\.country", "users\\.\\d+\\.postal", "users\\.\\d+\\.active",
-            "orders\\.\\d+\\.total", "orders\\.\\d+\\.currency", "orders\\.\\d+\\.status", "orders\\.\\d+\\.date",
-            "products\\.\\d+\\.name", "products\\.\\d+\\.price", "products\\.\\d+\\.category"
+            "users\\\\.\\\\d+\\\\.name", "users\\\\.\\\\d+\\\\.email", "users\\\\.\\\\d+\\\\.age", "users\\\\.\\\\d+\\\\.phone",
+            "users\\\\.\\\\d+\\\\.address", "users\\\\.\\\\d+\\\\.country", "users\\\\.\\\\d+\\\\.postal", "users\\\\.\\\\d+\\\\.active",
+            "orders\\\\.\\\\d+\\\\.total", "orders\\\\.\\\\d+\\\\.currency", "orders\\\\.\\\\d+\\\\.status", "orders\\\\.\\\\d+\\\\.date",
+            "products\\\\.\\\\d+\\\\.name", "products\\\\.\\\\d+\\\\.price", "products\\\\.\\\\d+\\\\.category"
         }
         assert result == expected
 
@@ -159,11 +159,11 @@ class TestHelperFunctions:
     def test_escape_regex_chars(self):
         """Test regex character escaping."""
         assert _escape_regex_chars("normal") == "normal"
-        assert _escape_regex_chars("api[v1]") == "api\\[v1\\]"
-        assert _escape_regex_chars("cache(redis)") == "cache\\(redis\\)"
-        assert _escape_regex_chars("logs+debug") == "logs\\+debug"
-        assert _escape_regex_chars("data.nested") == "data\\.nested"
-        assert _escape_regex_chars("query*") == "query\\*"
+        assert _escape_regex_chars("api[v1]") == "api\\\\[v1\\\\]"
+        assert _escape_regex_chars("cache(redis)") == "cache\\\\(redis\\\\)"
+        assert _escape_regex_chars("logs+debug") == "logs\\\\+debug"
+        assert _escape_regex_chars("data.nested") == "data\\\\.nested"
+        assert _escape_regex_chars("query*") == "query\\\\*"
     
     def test_basic_pattern_extraction(self):
         """Test Phase 1 pattern extraction with counts."""
@@ -171,8 +171,8 @@ class TestHelperFunctions:
         result = _extract_basic_patterns(keys)
         
         expected = {
-            "users\\.\\d+\\.id": 2,
-            "orders\\.\\d+\\.total": 1
+            "users\\\\.\\\\d+\\\\.id": 2,
+            "orders\\\\.\\\\d+\\\\.total": 1
         }
         assert result == expected
 
@@ -193,11 +193,11 @@ class TestRealWorldScenarios:
         result = extract_generalized_patterns(keys)
         
         expected = {
-            "api\\.v1\\.users\\.\\d+\\.profile",
-            "api\\.v1\\.users\\.\\d+\\.settings",
-            "api\\.v1\\.orders\\.\\d+\\.items\\.\\d+\\.details", 
-            "api\\.v1\\.orders\\.\\d+\\.status",
-            "api\\.v2\\.products\\.\\d+\\.reviews\\.\\d+\\.rating"
+            "api\\\\.v1\\\\.users\\\\.\\\\d+\\\\.profile",
+            "api\\\\.v1\\\\.users\\\\.\\\\d+\\\\.settings",
+            "api\\\\.v1\\\\.orders\\\\.\\\\d+\\\\.items\\\\.\\\\d+\\\\.details", 
+            "api\\\\.v1\\\\.orders\\\\.\\\\d+\\\\.status",
+            "api\\\\.v2\\\\.products\\\\.\\\\d+\\\\.reviews\\\\.\\\\d+\\\\.rating"
         }
         assert result == expected
     
@@ -214,11 +214,11 @@ class TestRealWorldScenarios:
         result = extract_generalized_patterns(keys)
         
         expected = {
-            "app\\.service1\\.thread\\.\\d+\\.error",
-            "app\\.service1\\.thread\\.\\d+\\.warning",
-            "app\\.service2\\.cache\\.hit\\.\\d+\\.key",
-            "metrics\\.cpu\\.core\\.\\d+\\.usage",
-            "metrics\\.cpu\\.core\\.\\d+\\.temperature"
+            "app\\\\.service1\\\\.thread\\\\.\\\\d+\\\\.error",
+            "app\\\\.service1\\\\.thread\\\\.\\\\d+\\\\.warning",
+            "app\\\\.service2\\\\.cache\\\\.hit\\\\.\\\\d+\\\\.key",
+            "metrics\\\\.cpu\\\\.core\\\\.\\\\d+\\\\.usage",
+            "metrics\\\\.cpu\\\\.core\\\\.\\\\d+\\\\.temperature"
         }
         assert result == expected
 

@@ -59,7 +59,7 @@ def example_advanced_generalization():
         print(f"  {pattern}")
     
     print(f"\nExplanation:")
-    print(f"  - Users pattern (76.9%) is between 75-95%, so generalized to \\w+")
+    print(f"  - Users pattern (76.9%) is between 75-95%, so generalized to \\\\w+")
     print(f"  - Orders pattern (23.1%) is below 75%, so kept separate")
 
 
