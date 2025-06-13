@@ -16,8 +16,8 @@ class TestBasicPatternExtraction:
         result = extract_generalized_patterns(keys)
         
         expected = {
-            "users\\.\\d+\\.id",
-            "products\\.\\d+\\.name"
+            "users\\\\.\\\\d+\\\\.id",
+            "products\\\\.\\\\d+\\\\.name"
         }
         assert result == expected
     

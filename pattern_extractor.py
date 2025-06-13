@@ -45,14 +45,14 @@ def _extract_basic_patterns(keys: List[str]) -> Dict[str, int]:
         for segment in segments:
             # Check if segment is purely numeric
             if segment.isdigit():
-                processed_segments.append('\\d+')
+                processed_segments.append('\\\\d+')  # Double backslash format
             else:
                 # Escape special regex characters in non-numeric segments
                 escaped_segment = _escape_regex_chars(segment)
                 processed_segments.append(escaped_segment)
         
-        # Join with escaped dots
-        pattern = '\\.'.join(processed_segments)
+        # Join with escaped dots (double backslash format)
+        pattern = '\\\\.'.join(processed_segments)
         pattern_counts[pattern] += 1
     
     return pattern_counts
@@ -66,7 +66,7 @@ def _escape_regex_chars(segment: str) -> str:
         segment: Raw segment that may contain regex special chars
         
     Returns:
-        Escaped segment safe for regex use
+        Escaped segment safe for regex use with double backslashes for output format
     """
     # Characters that need escaping in regex
     special_chars = r'\.^$*+?{}[]|()'
@@ -74,7 +74,7 @@ def _escape_regex_chars(segment: str) -> str:
     escaped = ""
     for char in segment:
         if char in special_chars:
-            escaped += '\\' + char
+            escaped += '\\\\' + char  # Double backslash for output format
         else:
             escaped += char
     
@@ -96,9 +96,9 @@ def _apply_frequency_generalization(pattern_counts: Dict[str, int], total_keys: 
     prefix_groups = defaultdict(list)
     
     for pattern, count in pattern_counts.items():
-        segments = pattern.split('\\.')
+        segments = pattern.split('\\\\.')  # Split on double backslash dot
         if len(segments) > 1:
-            prefix = '\\.'.join(segments[:-1])
+            prefix = '\\\\.'.join(segments[:-1])  # Join with double backslash dot
             final_segment = segments[-1]
             prefix_groups[prefix].append((pattern, final_segment, count))
         else:
@@ -130,7 +130,7 @@ def _apply_frequency_generalization(pattern_counts: Dict[str, int], total_keys: 
         else:
             # 75-95% - generalize final segment
             if prefix:  # Ensure we have a meaningful prefix
-                generalized_pattern = prefix + '\\.' + '\\w+'
+                generalized_pattern = prefix + '\\\\.' + '\\\\w+'  # Double backslash format
                 final_patterns.add(generalized_pattern)
             else:
                 # Fallback to individual patterns if no prefix
